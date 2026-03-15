@@ -12,6 +12,7 @@ public enum ShowType {
          }
 
      },
+    
     PREMIUM_3D{
 
          public double calculatePrice(double base_price){
@@ -21,6 +22,7 @@ public enum ShowType {
              return "Premium 3D";
          }
     },
+
     IMAX{
          public double calculatePrice(double base_price){
              return base_price * 3.0;
