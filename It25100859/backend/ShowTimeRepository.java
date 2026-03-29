@@ -1,6 +1,7 @@
 package com.components3.Movie.ticket.Reservation.Platform.repository;
 
 import com.components3.Movie.ticket.Reservation.Platform.bean.ShowTime;
+import com.components3.Movie.ticket.Reservation.Platform.bean.TheaterHall;
 import org.springframework.stereotype.Repository;
 
 import java.io.*;
@@ -107,7 +108,7 @@ public class ShowTimeRepository {
         return result;
     }
 
-    public List<ShowTime> findByHallID(String hallID){
+    public List<ShowTime> findByHall(String hallID){
         List<ShowTime> result = new ArrayList<>();
 
         for(ShowTime s: readAll()){
@@ -132,6 +133,67 @@ public class ShowTimeRepository {
         }
         return String.format("ST%03d", max + 1);
     }
+
+    // Operations on Hall File
+
+
+    public List<TheaterHall> readAllHalls() {
+        List<TheaterHall> halls = new ArrayList<>();
+        File file = new File(halls_file);
+
+        if (!file.exists()) {
+
+            return getDefaultHalls();
+        }
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                line = line.trim();
+                if (!line.isEmpty()) {
+                    halls.add(TheaterHall.fromFileString(line));
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error reading halls.txt: " + e.getMessage());
+            return getDefaultHalls();
+        }
+        return halls;
+    }
+
+    private List<TheaterHall> getDefaultHalls() {
+        List<TheaterHall> defaults = new ArrayList<>();
+        defaults.add(new TheaterHall("H001", "Hall A",  8, 10, "STANDARD_2D"));
+        defaults.add(new TheaterHall("H002", "Hall B",  8, 10, "PREMIUM_3D"));
+        defaults.add(new TheaterHall("H003", "IMAX Hall", 10, 15, "IMAX"));
+
+        writeAllHalls(defaults);
+        return defaults;
+    }
+
+
+    public void writeAllHalls(List<TheaterHall> halls) {
+        new File("data").mkdirs();
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(halls_file, false))) {
+            for (TheaterHall h : halls) {
+                writer.write(h.toFileString());
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            System.err.println("Error writing halls.txt: " + e.getMessage());
+        }
+    }
+
+    public TheaterHall findHallById(String hallId) {
+        return readAllHalls().stream()
+                .filter(h -> h.getHallID().equals(hallId))
+                .findFirst()
+                .orElse(null);
+    }
+
+
+
+
 
 
 
