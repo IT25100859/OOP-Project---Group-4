@@ -1,4 +1,4 @@
-package com.components3.Movie.ticket.Reservation.Platform.bean;
+package com.Components3.component3.bean;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ShowTime {
 
-    private String showTimeID;
-    private String movieName;
-    private String hallID;
+    private String showtimeId;
+    private String movieTitle;
+    private String hallId;
     private String hallName;
     private String showDate;
     private String showTime;
@@ -34,9 +34,9 @@ public class ShowTime {
     public String toFileString(){
 
         return String.join("|",
-                showTimeID,
-                movieName,
-                hallID,
+                showtimeId,
+                movieTitle,
+                hallId,
                 hallName,
                 showDate,
                 showTime,
@@ -54,9 +54,9 @@ public class ShowTime {
             return null;
         }
         ShowTime st = new ShowTime();
-        st.setShowTime(parts[0]);
-        st.setMovieName(parts[1]);
-        st.setHallID(parts[2]);
+        st.setShowtimeId(parts[0]);
+        st.setMovieTitle(parts[1]);
+        st.setHallId(parts[2]);
         st.setHallName(parts[3]);
         st.setShowDate(parts[4]);
         st.setShowTime(parts[5]);

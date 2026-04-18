@@ -1,4 +1,4 @@
-package com.components3.Movie.ticket.Reservation.Platform.bean;
+package com.Components3.component3.bean;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class TheaterHall {
 
-    private String HallID;
-    private String Hallname;
+    private String hallId;
+    private String hallName;
     private int rows;
     private int columns;
     private String HallType;
@@ -21,7 +21,7 @@ public class TheaterHall {
 
     public String toFileString(){
 
-        return String.join("|",HallID,Hallname,String.valueOf(rows),String.valueOf(columns),HallType);
+        return String.join("|",hallId,hallName,String.valueOf(rows),String.valueOf(columns),HallType);
     }
 
     public static TheaterHall fromFileString(String line){
