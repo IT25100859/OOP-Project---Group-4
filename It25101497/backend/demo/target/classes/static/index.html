@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Zynix Movie Reservations</title>
+    <style>
+        /* Basic Styling */
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 30px; background-color: #f9f9f9; }
+
+        /* Heading Styling */
+        h2 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
+
+        .container { display: flex; gap: 30px; margin-top: 20px; }
+
+        /* Form Box */
+        .form-panel {
+            flex: 1; background: white; padding: 20px;
+            border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        /* Table Box */
+        .history-panel {
+            flex: 2; background: white; padding: 20px;
+            border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        input, select { width: 90%; padding: 10px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 4px; }
+
+        table { border-collapse: collapse; width: 100%; margin-top: 10px; }
+        th, td { border: 1px solid #eee; padding: 12px; text-align: left; }
+        th { background-color: #f2f2f2; color: #333; }
+
+        /* BUTTON COLORS */
+        .btn-book { background-color: #3498db; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; width: 100%; font-weight: bold; }
+        .btn-book:hover { background-color: #2980b9; }
+
+        /* Updated Action Button Colors */
+        .btn-edit { background-color: #2ecc71; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; } /* Green */
+        .btn-edit:hover { background-color: #27ae60; }
+
+        .btn-del { background-color: #e74c3c; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; } /* Red */
+        .btn-del:hover { background-color: #c0392b; }
+    </style>
+</head>
+<body>
+
+<h2>🎬 Reserve Your Seats Now</h2>
+
+<div class="container">
+    <div class="form-panel">
+        <h3>Booking Details</h3>
+        <input type="text" id="custName" placeholder="Customer Name">
+        <input type="text" id="movie" placeholder="Movie Title">
+        <input type="text" id="seat" placeholder="Seat (e.g., A7)">
+        <input type="date" id="date">
+        <input type="time" id="time">
+        <select id="type">
+            <option value="Standard">Standard (Rs. 780)</option>
+            <option value="VIP">VIP (Rs. 1500)</option>
+        </select>
+        <button class="btn-book" onclick="add()">Confirm Reservation</button>
+    </div>
+
+    <div class="history-panel">
+        <h3>Booking History</h3>
+        <table id="table">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Movie</th>
+                <th>Name</th>
+                <th>Seat</th>
+                <th>Price</th>
+                <th>Date & Time</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    // --- CREATE ---
+    function add() {
+        const url = `/test-booking?name=${v('custName')}&movie=${v('movie')}&seatNo=${v('seat')}&type=${v('type')}&date=${v('date')}&time=${v('time')}`;
+        fetch(url).then(r => r.text()).then(m => {
+            alert(m);
+            load();
+            // Clear inputs
+            document.getElementById('custName').value = '';
+            document.getElementById('movie').value = '';
+            document.getElementById('seat').value = '';
+        });
+    }
+
+    // --- READ ---
+    function load() {
+        fetch('/view-bookings').then(r => r.json()).then(data => {
+            const b = document.querySelector('#table tbody');
+            b.innerHTML = '';
+            data.forEach(line => {
+                const p = line.split(',');
+                if(p.length < 7) return;
+                b.innerHTML += `<tr>
+                        <td>${p[0]}</td>
+                        <td><b>${p[1]}</b></td>
+                        <td>${p[2]}</td>
+                        <td>${p[3]}</td>
+                        <td>Rs.${p[4]}</td>
+                        <td>${p[5]} at ${p[6]}</td>
+                        <td>
+                            <button class="btn-edit" onclick="edit('${p[0]}','${p[1]}','${p[2]}','${p[3]}','${p[5]}','${p[6]}')">Edit</button>
+                            <button class="btn-del" onclick="del('${p[0]}')">Del</button>
+                        </td>
+                    </tr>`;
+            });
+        });
+    }
+
+    // --- UPDATE ---
+    function edit(id, t, n, s, d, tm) {
+        const nt = prompt("Update Movie:", t);
+        const nn = prompt("Update Customer Name:", n);
+        const ns = prompt("Update Seat Number:", s);
+        const nd = prompt("Update Date (YYYY-MM-DD):", d);
+        const ntm = prompt("Update Time (HH:mm):", tm);
+
+        if(nt && nn && ns) {
+            fetch(`/update-booking?id=${id}&newTitle=${nt}&newName=${nn}&newSeat=${ns}&newDate=${nd}&newTime=${ntm}`)
+                .then(r => r.text()).then(m => { alert(m); load(); });
+        }
+    }
+
+    // --- DELETE ---
+    function del(id) {
+        if(confirm("Are you sure you want to cancel this booking?")) {
+            fetch('/delete-booking?id='+id).then(() => load());
+        }
+    }
+
+    function v(id) { return document.getElementById(id).value; }
+    load(); // Auto load on startup
+</script>
+</body>
+</html>
