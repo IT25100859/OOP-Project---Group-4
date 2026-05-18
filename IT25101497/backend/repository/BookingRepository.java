@@ -8,18 +8,18 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * BookingRepository – all CRUD operations on bookings.txt.
- *
- * File path : data/bookings.txt  (defined in FilePathConstants)
- * Format    : pipe-separated, 14 columns (see Booking.toFileString)
- */
+
+ // BookingRepository – all CRUD operations on bookings.txt.
+ 
+ // File path : data/bookings.txt  (defined in FilePathConstants)
+ // Format    : pipe-separated, 14 columns (see Booking.toFileString)
+ 
 @Repository
 public class BookingRepository {
 
     private static final String FILE_PATH = FilePathConstants.BOOKINGS_FILE;
 
-    // ── READ ───────────────────────────────────────────────────────────────
+    //READ 
 
     public List<Booking> readAll() {
         List<Booking> list = new ArrayList<>();
@@ -53,7 +53,7 @@ public class BookingRepository {
         }
     }
 
-    // ── FIND ───────────────────────────────────────────────────────────────
+    //FIND
 
     public Booking findById(String bookingId) {
         return readAll().stream()
@@ -61,7 +61,7 @@ public class BookingRepository {
                 .findFirst().orElse(null);
     }
 
-    /** All bookings belonging to a specific customer (by userId). */
+    //All bookings belonging to a specific customer (by userId). 
     public List<Booking> findByUserId(String userId) {
         List<Booking> result = new ArrayList<>();
         for (Booking b : readAll())
@@ -69,7 +69,7 @@ public class BookingRepository {
         return result;
     }
 
-    /** All bookings for a specific showtime (used to check seat occupancy). */
+    // All bookings for a specific showtime (used to check seat occupancy).
     public List<Booking> findByShowtimeId(String showtimeId) {
         List<Booking> result = new ArrayList<>();
         for (Booking b : readAll())
@@ -77,7 +77,7 @@ public class BookingRepository {
         return result;
     }
 
-    // ── WRITE ──────────────────────────────────────────────────────────────
+    //WRITE
 
     public void save(Booking booking) {
         List<Booking> all = readAll();
@@ -99,7 +99,7 @@ public class BookingRepository {
         return found;
     }
 
-    // ── ID GENERATOR ───────────────────────────────────────────────────────
+    //ID GENERATOR
 
     public String generateNextId() {
         List<Booking> all = readAll();
