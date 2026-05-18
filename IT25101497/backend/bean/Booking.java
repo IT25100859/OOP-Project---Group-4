@@ -4,21 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * Booking – represents a confirmed seat reservation.
- *
- * OOP Concepts:
- *   - Encapsulation : all fields private; accessed only via Lombok-generated
- *                     getters/setters, keeping booking data secure.
- *
- * File format (pipe-separated, 14 columns) in bookings.txt:
- *   bookingId | userId | username | showtimeId | movieTitle | hallName |
- *   showDate  | showTime | showType | seats | seatCount | totalPrice |
- *   status | bookingDate
- *
- * seats      : comma-separated seat labels, e.g. "A1,A2,C3"
- * status     : CONFIRMED | CANCELLED
- */
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
