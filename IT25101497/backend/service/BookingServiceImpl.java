@@ -81,11 +81,11 @@ public class BookingServiceImpl implements BookingService {
         return bookingRepository.findById(bookingId);
     }
 
-    /*
-     * Returns only CONFIRMED bookings for a showtime.
-     * Cancelled bookings are excluded so their seats appear available again.
-     * Used by ShowTimeController to build the exact set of booked seat labels.
-     */
+    
+     // Returns only CONFIRMED bookings for a showtime.
+     // Cancelled bookings are excluded so their seats appear available again.
+     // Used by ShowTimeController to build the exact set of booked seat labels.
+     
     @Override
     public List<Booking> getBookingsByShowtime(String showtimeId) {
         return bookingRepository.findByShowtimeId(showtimeId)
@@ -101,7 +101,7 @@ public class BookingServiceImpl implements BookingService {
         return list;
     }
 
-    // ── DELETE (soft cancel)
+    // DELETE (soft cancel)
 
     @Override
     public boolean cancelBooking(String bookingId, String requestingUserId) {
