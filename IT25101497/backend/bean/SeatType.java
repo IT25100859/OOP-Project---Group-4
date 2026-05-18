@@ -1,17 +1,17 @@
 package com.CompleteProject.completeproject.bean;
 
-/*
 
 
- * OOP Concepts:
- *   - Polymorphism  : abstract calculatePrice() overridden by each constant
- *   - Encapsulation : pricing logic hidden inside each constant
 
- *   Rows A & B  → VIP     (first 2 rows of any hall)
- *   Row  C+     → STANDARD
- *
- * Final price per seat = showType.calculatePrice(basePrice) × seatType multiplier
- */
+ // OOP Concepts:
+ //   - Polymorphism  : abstract calculatePrice() overridden by each constant
+ //   - Encapsulation : pricing logic hidden inside each constant
+
+ //   Rows A & B  → VIP     (first 2 rows of any hall)
+ //   Row  C+     → STANDARD
+ 
+ // Final price per seat = showType.calculatePrice(basePrice) × seatType multiplier
+ 
 public enum SeatType {
 
     STANDARD {
@@ -36,18 +36,18 @@ public enum SeatType {
         public String getBadgeColor() { return "#f5c518"; }
     };
 
-    /** Applies seat-type multiplier on top of the show-type price. */
+    // Applies seat-type multiplier on top of the show-type price. 
     public abstract double calculatePrice(double showTypePrice);
 
     public abstract String getLabel();
 
-    /** CSS hex colour used in JSP badges. */
+    // CSS hex colour used in JSP badges. 
     public abstract String getBadgeColor();
 
-    /**
-     * Derives SeatType from a seat label such as "A3" or "B10".
-     * Row letter A or B → VIP; everything else → STANDARD.
-     */
+    
+     // Derives SeatType from a seat label such as "A3" or "B10".
+     // Row letter A or B → VIP; everything else → STANDARD.
+    
     public static SeatType fromSeatLabel(String seatLabel) {
         if (seatLabel == null || seatLabel.isEmpty()) return STANDARD;
         char row = Character.toUpperCase(seatLabel.charAt(0));
