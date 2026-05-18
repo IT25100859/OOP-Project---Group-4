@@ -19,17 +19,17 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * BookingController – handles the full reservation & seat-booking flow.
- *
- * URL map:
- *   GET  /booking/new?showtimeId=X&seats=A1,B2&count=2  → booking-confirm.jsp
- *   POST /booking/confirm                                 → save & redirect to my-bookings
- *   GET  /booking/my-bookings                             → my-bookings.jsp
- *   GET  /booking/detail/{id}                             → booking-detail.jsp
- *   GET  /booking/cancel/{id}                             → cancel & redirect
- *   GET  /booking/all      (admin)                        → all bookings table
- */
+
+ // BookingController – handles the full reservation & seat-booking flow.
+ 
+ // URL map:
+ //   GET  /booking/new?showtimeId=X&seats=A1,B2&count=2  → booking-confirm.jsp
+ //   POST /booking/confirm                                 → save & redirect to my-bookings
+ //   GET  /booking/my-bookings                             → my-bookings.jsp
+ //   GET  /booking/detail/{id}                             → booking-detail.jsp
+ //   GET  /booking/cancel/{id}                             → cancel & redirect
+ //   GET  /booking/all      (admin)                        → all bookings table
+ 
 @Controller
 @RequestMapping("/booking")
 public class BookingController {
@@ -43,9 +43,9 @@ public class BookingController {
     @Autowired
     private ShowTimeService showTimeService;
 
-    // ══════════════════════════════════════════════════════════════════════
+
     //  STEP 1 – Show confirmation page (entry point from hall-layout.jsp)
-    // ══════════════════════════════════════════════════════════════════════
+
 
     @GetMapping("/new")
     public String showConfirmPage(@RequestParam String showtimeId,
@@ -98,9 +98,9 @@ public class BookingController {
         return "booking/booking-confirm";
     }
 
-    // ══════════════════════════════════════════════════════════════════════
+
     //  STEP 2 – Process booking (form POST from confirm page)
-    // ══════════════════════════════════════════════════════════════════════
+    
 
     @PostMapping("/confirm")
     public String processBooking(@RequestParam String showtimeId,
@@ -125,9 +125,9 @@ public class BookingController {
         return "redirect:/payment/checkout?bookingId=" + booking.getBookingId();
     }
 
-    // ══════════════════════════════════════════════════════════════════════
+   
     //  MY BOOKINGS (customer's ticket list)
-    // ══════════════════════════════════════════════════════════════════════
+    
 
     @GetMapping("/my-bookings")
     public String myBookings(HttpSession session, Model model) {
@@ -142,9 +142,9 @@ public class BookingController {
         return "booking/my-bookings";
     }
 
-    // ══════════════════════════════════════════════════════════════════════
+    
     //  BOOKING DETAIL / TICKET VIEW
-    // ══════════════════════════════════════════════════════════════════════
+ 
 
     @GetMapping("/detail/{id}")
     public String bookingDetail(@PathVariable String id,
@@ -186,9 +186,9 @@ public class BookingController {
         return "booking/booking-detail";
     }
 
-    // ══════════════════════════════════════════════════════════════════════
+ 
     //  CANCEL BOOKING
-    // ══════════════════════════════════════════════════════════════════════
+   
 
     @GetMapping("/cancel/{id}")
     public String cancelBooking(@PathVariable String id,
@@ -211,9 +211,9 @@ public class BookingController {
         return "redirect:/booking/my-bookings";
     }
 
-    // ══════════════════════════════════════════════════════════════════════
+
     //  ADMIN – all bookings
-    // ══════════════════════════════════════════════════════════════════════
+
 
     @GetMapping("/all")
     public String allBookings(HttpSession session, Model model) {
@@ -225,9 +225,9 @@ public class BookingController {
         return "booking/all-bookings";
     }
 
-    // ══════════════════════════════════════════════════════════════════════
+
     //  SECURITY HELPERS
-    // ══════════════════════════════════════════════════════════════════════
+
 
     private boolean isLoggedIn(HttpSession session) {
         return session != null && session.getAttribute("loggedInUser") != null;
