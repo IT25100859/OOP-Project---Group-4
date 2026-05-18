@@ -25,12 +25,12 @@ public class Booking {
     private String status;        // CONFIRMED | CANCELLED
     private String bookingDate;   // ISO date: "2026-05-02"
 
-    // ── Derived helpers ────────────────────────────────────────────────────
+    //  Derived helpers 
 
     public boolean isConfirmed()  { return "CONFIRMED".equalsIgnoreCase(status); }
     public boolean isCancelled()  { return "CANCELLED".equalsIgnoreCase(status); }
 
-    /** Human-readable show type label (mirrors ShowType.getLabel()). */
+    // Human-readable show type label (mirrors ShowType.getLabel()). 
     public String getShowTypeLabel() {
         if (showType == null) return "";
         switch (showType) {
@@ -41,7 +41,7 @@ public class Booking {
         }
     }
 
-    // ── Serialisation ──────────────────────────────────────────────────────
+    //  Serialisation 
 
     public String toFileString() {
         return String.join("|",
