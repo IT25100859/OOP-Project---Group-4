@@ -1,11 +1,11 @@
-package com.users.userprofile.service;
+package com.CompleteProject.completeproject.service;
 
-import com.users.userprofile.bean.User;
-import com.users.userprofile.bean.Customer;
+import com.CompleteProject.completeproject.bean.User;
+import com.CompleteProject.completeproject.bean.Customer;
 
 import java.util.List;
 
-
+// Interface : OOP concept abstraction
 public interface UserService {
 
 
