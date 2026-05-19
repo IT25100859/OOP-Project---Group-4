@@ -1,17 +1,12 @@
-package com.users.userprofile.bean;
+package com.CompleteProject.completeproject.bean;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-
-
-@Data
-@EqualsAndHashCode(callSuper = true)
-@NoArgsConstructor
 public class Customer extends User {
-
-
     private int totalBookings;
+
+    public int getTotalBookings() { return totalBookings; }
+    public void setTotalBookings(int totalBookings) { this.totalBookings = totalBookings; }
+
+    public Customer() {}
 
     public Customer(String userId, String username, String email,
                     String password, String fullName, String phone,
