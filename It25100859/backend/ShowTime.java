@@ -1,14 +1,6 @@
-package com.Components3.component3.bean;
+package com.CompleteProject.completeproject.bean;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class ShowTime {
-
     private String showtimeId;
     private String movieTitle;
     private String hallId;
@@ -19,6 +11,44 @@ public class ShowTime {
     private double basePrice;
     private int totalSeats;
     private int bookedSeats;
+
+    public ShowTime() {}
+
+    public ShowTime(String showtimeId, String movieTitle, String hallId, String hallName, 
+                    String showDate, String showTime, ShowType showType, double basePrice, 
+                    int totalSeats, int bookedSeats) {
+        this.showtimeId = showtimeId;
+        this.movieTitle = movieTitle;
+        this.hallId = hallId;
+        this.hallName = hallName;
+        this.showDate = showDate;
+        this.showTime = showTime;
+        this.showType = showType;
+        this.basePrice = basePrice;
+        this.totalSeats = totalSeats;
+        this.bookedSeats = bookedSeats;
+    }
+
+    public String getShowtimeId() { return showtimeId; }
+    public void setShowtimeId(String showtimeId) { this.showtimeId = showtimeId; }
+    public String getMovieTitle() { return movieTitle; }
+    public void setMovieTitle(String movieTitle) { this.movieTitle = movieTitle; }
+    public String getHallId() { return hallId; }
+    public void setHallId(String hallId) { this.hallId = hallId; }
+    public String getHallName() { return hallName; }
+    public void setHallName(String hallName) { this.hallName = hallName; }
+    public String getShowDate() { return showDate; }
+    public void setShowDate(String showDate) { this.showDate = showDate; }
+    public String getShowTime() { return showTime; }
+    public void setShowTime(String showTime) { this.showTime = showTime; }
+    public ShowType getShowType() { return showType; }
+    public void setShowType(ShowType showType) { this.showType = showType; }
+    public double getBasePrice() { return basePrice; }
+    public void setBasePrice(double basePrice) { this.basePrice = basePrice; }
+    public int getTotalSeats() { return totalSeats; }
+    public void setTotalSeats(int totalSeats) { this.totalSeats = totalSeats; }
+    public int getBookedSeats() { return bookedSeats; }
+    public void setBookedSeats(int bookedSeats) { this.bookedSeats = bookedSeats; }
 
     public int getAvailableSeats(){
         return totalSeats-bookedSeats;
