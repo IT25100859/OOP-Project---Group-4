@@ -1,14 +1,12 @@
-package com.users.userprofile.service;
+package com.CompleteProject.completeproject.service;
 
-import com.users.userprofile.bean.Admin;
-import com.users.userprofile.bean.Customer;
-import com.users.userprofile.bean.User;
-import com.users.userprofile.repository.UserRepository;
+import com.CompleteProject.completeproject.bean.Customer;
+import com.CompleteProject.completeproject.bean.User;
+import com.CompleteProject.completeproject.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -16,26 +14,27 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
 
-    //  CREATE
+    // CREATE
 
     @Override
     public boolean registerCustomer(Customer customer) {
         if (isUsernameTaken(customer.getUsername())) return false;
         if (isEmailTaken(customer.getEmail()))       return false;
 
-        // Auto-generate ID
         customer.setUserId(userRepository.generateNextId("CUSTOMER"));
         customer.setRole("CUSTOMER");
         customer.setStatus("ACTIVE");
         customer.setTotalBookings(0);
 
-        // Normalise security answer to lowercase for case-insensitive matching
-        customer.setSecurityAnswer(customer.getSecurityAnswer().toLowerCase().trim());
+        // Security question is no longer collected on registration.
+        // Password recovery is handled via OTP email
+        // Set empty defaults so the file format stays intact.
+        customer.setSecurityQuestion("N/A");
+        customer.setSecurityAnswer("N/A");
 
         userRepository.save(customer);
         return true;
     }
-
 
     // READ
 
@@ -59,27 +58,21 @@ public class UserServiceImpl implements UserService {
         return userRepository.findById(userId);
     }
 
-
-    //UPDATE
+    // UPDATE
 
     @Override
     public boolean updateProfile(User user) {
         return userRepository.update(user);
     }
 
-
     @Override
     public boolean changePassword(String userId, String oldPassword, String newPassword) {
         User user = userRepository.findById(userId);
         if (user == null) return false;
-
-        // Verify the old password matches what is stored
         if (!user.getPassword().equals(oldPassword)) return false;
-
         user.setPassword(newPassword);
         return userRepository.update(user);
     }
-
 
     // DELETE
 
@@ -96,16 +89,15 @@ public class UserServiceImpl implements UserService {
         return userRepository.delete(userId);
     }
 
-
     // AUTHENTICATION
 
     @Override
     public User login(String username, String password) {
         User user = userRepository.findByUsername(username);
-        if (user == null)             return null; // username not found
-        if (!user.isActive())         return null; // account deactivated
-        if (!user.getPassword().equals(password)) return null; // wrong password
-        return user; // all checks passed
+        if (user == null)                             return null;
+        if (!user.isActive())                         return null;
+        if (!user.getPassword().equals(password))     return null;
+        return user;
     }
 
     @Override
@@ -118,24 +110,23 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByEmail(email) != null;
     }
 
+    //  PASSWORD RESET (OTP-based — security question no longer used)
 
-    // FORGOT PASSWORD (3-Step Flow)
-
+    /*
+      getSecurityQuestion and verifySecurityAnswer are kept in the interface
+      for backwards compatibility with existing users.txt records, but are
+      no longer called by any controller. Password recovery now goes through
+      OtpStore -> EmailService in UserController.
+     */
     @Override
     public String getSecurityQuestion(String username) {
-        User user = userRepository.findByUsername(username);
-        if (user == null) return null;
-        return user.getSecurityQuestion();
+        return null;   // retired — OTP flow used instead
     }
-
 
     @Override
     public boolean verifySecurityAnswer(String username, String answer) {
-        User user = userRepository.findByUsername(username);
-        if (user == null) return false;
-        return user.getSecurityAnswer().equals(answer.toLowerCase().trim());
+        return false;  // retired — OTP flow used instead
     }
-
 
     @Override
     public boolean resetPassword(String username, String newPassword) {
