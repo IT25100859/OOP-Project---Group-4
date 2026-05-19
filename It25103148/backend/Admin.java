@@ -1,17 +1,12 @@
-package com.users.userprofile.bean;
+package com.CompleteProject.completeproject.bean;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-
-
-@Data
-@EqualsAndHashCode(callSuper = true)
-@NoArgsConstructor
 public class Admin extends User {
-
-
     private String department;
+
+    public String getDepartment() { return department; }
+    public void setDepartment(String department) { this.department = department; }
+
+    public Admin() {}
 
     public Admin(String userId, String username, String email,
                  String password, String fullName, String phone,
