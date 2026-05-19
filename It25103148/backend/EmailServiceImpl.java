@@ -8,22 +8,21 @@ import org.springframework.stereotype.Service;
 
 import jakarta.mail.internet.MimeMessage;
 
-/**
- * EmailServiceImpl – sends emails via Spring Mail (SMTP).
- *
- * If JavaMailSender is not configured (mail.enabled=false in
- * application.properties), all emails are printed to the console
- * instead, so development works without an SMTP server.
- *
- * Setup required in application.properties:
- *   mail.enabled=true
- *   spring.mail.host=smtp.gmail.com
- *   spring.mail.port=587
- *   spring.mail.username=your-email@gmail.com
- *   spring.mail.password=your-app-password
- *   spring.mail.properties.mail.smtp.auth=true
- *   spring.mail.properties.mail.smtp.starttls.enable=true
- *   cinebook.mail.from=your-email@gmail.com
+/*
+  EmailServiceImpl – sends emails via Spring Mail (SMTP).
+
+  If JavaMailSender is not configured (mail.enabled=false inapplication.properties),
+  all emails are printed to the console instead, so development works without an SMTP server.
+
+  Setup required in application.properties:
+    mail.enabled=true
+    spring.mail.host=smtp.gmail.com
+    spring.mail.port=587
+    spring.mail.username=your-email@gmail.com
+    spring.mail.password=your-app-password
+    spring.mail.properties.mail.smtp.auth=true
+    spring.mail.properties.mail.smtp.starttls.enable=true
+    cinebook.mail.from=your-email@gmail.com
  */
 @Service
 public class EmailServiceImpl implements EmailService {
@@ -31,14 +30,14 @@ public class EmailServiceImpl implements EmailService {
     @Autowired(required = false)
     private JavaMailSender mailSender;
 
-    /** Set to false in application.properties to disable real emails. */
+    // Set to false in application.properties to disable real emails
     @Value("${mail.enabled:false}")
     private boolean mailEnabled;
 
     @Value("${cinebook.mail.from:noreply@cinebook.com}")
     private String fromAddress;
 
-    // ── LOGIN NOTIFICATION ────────────────────────────────────────────────
+    // LOGIN NOTIFICATION
 
     @Override
     public void sendLoginNotification(String toEmail, String username,
@@ -66,7 +65,7 @@ public class EmailServiceImpl implements EmailService {
         send(toEmail, subject, html);
     }
 
-    // ── OTP EMAIL ─────────────────────────────────────────────────────────
+    // OTP EMAIL
 
     @Override
     public void sendOtpEmail(String toEmail, String username, String otp) {
@@ -92,7 +91,7 @@ public class EmailServiceImpl implements EmailService {
         send(toEmail, subject, html);
     }
 
-    // ── PRIVATE HELPERS ───────────────────────────────────────────────────
+    // PRIVATE HELPERS
 
     private void send(String to, String subject, String htmlBody) {
         if (!mailEnabled || mailSender == null) {
@@ -129,7 +128,7 @@ public class EmailServiceImpl implements EmailService {
         }
     }
 
-    /** Minimal HTML email template matching the CineBook warm light theme. */
+    // Minimal HTML email template matching the CineBook warm light theme
     private String buildHtml(String heading, String greeting,
                              String intro, String body) {
         return "<!DOCTYPE html><html><head>" +
@@ -162,7 +161,7 @@ public class EmailServiceImpl implements EmailService {
                "</div></body></html>";
     }
 
-    /** Escapes HTML special characters to prevent injection in email content. */
+    // Escapes HTML special characters to prevent injection in email content
     private String escape(String s) {
         if (s == null) return "";
         return s.replace("&", "&amp;")
