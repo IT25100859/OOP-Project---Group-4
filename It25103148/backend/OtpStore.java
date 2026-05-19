@@ -7,16 +7,16 @@ import java.time.Instant;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * OtpStore – manages one-time passwords for the forgot-password flow.
- *
- * Stored in memory only (not persisted to disk). If the server restarts,
- * any pending OTPs are cleared — users simply request a new one.
- *
- * Each username may have only ONE active OTP at a time; generating a new
- * one automatically invalidates the previous.
- *
- * Expiry: 10 minutes from generation.
+/*
+  OtpStore – manages one-time passwords for the forgot password flow
+
+  Stored in memory only (not persisted to disk). If the server restarts,
+  any pending OTPs are cleared, users simply request a new one.
+
+  Each username may have only ONE active OTP at a time;
+  generating a new one automatically invalidates the previous.
+
+  Expiry - 10 minutes from generation.
  */
 @Component
 public class OtpStore {
@@ -27,7 +27,7 @@ public class OtpStore {
 
     private final SecureRandom rng = new SecureRandom();
 
-    /** Inner record: the OTP value + when it expires + attempt counter. */
+    // Inner record = the OTP value + when it expires + attempt counter
     private static class OtpEntry {
         final String  code;
         final Instant expiresAt;
@@ -44,35 +44,31 @@ public class OtpStore {
         }
     }
 
-    // username → OtpEntry
+    // username -> OtpEntry
     private final Map<String, OtpEntry> store = new ConcurrentHashMap<>();
 
-    // ── GENERATE ──────────────────────────────────────────────────────────
-
-    /**
-     * Generates a new 6-digit OTP for the given username, stores it,
-     * and returns the code so the caller can email it.
-     * Any previously stored OTP for this username is replaced.
+    /*
+     Generates a new 6 digit OTP for the given username, stores it,
+     and returns the code so the caller can email it.
+     Any previously stored OTP for this username is replaced.
      */
     public String generate(String username) {
-        // Zero-padded 6-digit number: 000000 – 999999
+        // Zero padded 6 digit number -> 000000 – 999999
         int    num  = rng.nextInt(1_000_000);
         String code = String.format("%06d", num);
         store.put(username.toLowerCase(), new OtpEntry(code));
         return code;
     }
 
-    // ── VERIFY ────────────────────────────────────────────────────────────
+    /*
+     Verifies the submitted code against the stored OTP.
 
-    /**
-     * Verifies the submitted code against the stored OTP.
-     *
-     * Returns:
-     *   VerifyResult.OK            – code matches and is not expired
-     *   VerifyResult.EXPIRED       – entry exists but has timed out
-     *   VerifyResult.WRONG         – code does not match
-     *   VerifyResult.TOO_MANY      – max attempts exceeded
-     *   VerifyResult.NOT_FOUND     – no OTP for this username
+     Returns
+       VerifyResult.OK            – code matches and is not expired
+       VerifyResult.EXPIRED       – entry exists but has timed out
+       VerifyResult.WRONG         – code does not match
+       VerifyResult.TOO_MANY      – max attempts exceeded
+       VerifyResult.NOT_FOUND     – no OTP for this username
      */
     public VerifyResult verify(String username, String submittedCode) {
         OtpEntry entry = store.get(username.toLowerCase());
@@ -98,14 +94,12 @@ public class OtpStore {
         return VerifyResult.OK;
     }
 
-    // ── INVALIDATE ────────────────────────────────────────────────────────
+    // Invalidate
 
-    /** Explicitly removes any OTP for a username (e.g. on password reset). */
     public void invalidate(String username) {
         store.remove(username.toLowerCase());
     }
 
-    // ── RESULT ENUM ───────────────────────────────────────────────────────
 
     public enum VerifyResult {
         OK,
