@@ -1,8 +1,10 @@
-package com.users.userprofile.controller;
+package com.CompleteProject.completeproject.controller;
 
-import com.users.userprofile.bean.Customer;
-import com.users.userprofile.bean.User;
-import com.users.userprofile.service.UserService;
+import com.CompleteProject.completeproject.bean.Customer;
+import com.CompleteProject.completeproject.bean.User;
+import com.CompleteProject.completeproject.service.EmailService;
+import com.CompleteProject.completeproject.service.OtpStore;
+import com.CompleteProject.completeproject.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -10,18 +12,26 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 @Controller
 @RequestMapping("/user")
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+    @Autowired private UserService   userService;
+    @Autowired private EmailService  emailService;
+    @Autowired private OtpStore      otpStore;
 
-    //  LOGIN
+    private static final DateTimeFormatter LOGIN_FMT =
+            DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm");
 
-   //Show the login form
+    // LOGIN
+
     @GetMapping("/login")
-    public String showLoginPage() {
+    public String showLoginPage(HttpSession session) {
+        if (session.getAttribute("loggedInUser") != null)
+            return "redirect:/";
         return "user/login";
     }
 
@@ -39,22 +49,35 @@ public class UserController {
             return "redirect:/user/login";
         }
 
-        // Store user in HTTP session so other pages know who is logged in
+        // Store user in session
         session.setAttribute("loggedInUser", user);
-        session.setAttribute("userId",   user.getUserId());
-        session.setAttribute("username", user.getUsername());
-        session.setAttribute("role",     user.getRole());
+        session.setAttribute("userId",       user.getUserId());
+        session.setAttribute("username",     user.getUsername());
+        session.setAttribute("role",         user.getRole());
 
-        // Redirect based on role
-        if (user.isAdmin()) {
-            return "redirect:/showtime/scheduler"; // Admin lands on scheduler
-        } else {
-            return "redirect:/showtime/schedule";  // Customer lands on daily schedule
+        // Send login notification email
+        // Runs in a new thread so it never blocks the login redirect.
+        String loginTime = LocalDateTime.now().format(LOGIN_FMT);
+        String toEmail   = user.getEmail();
+        String uname     = user.getUsername();
+
+        if (toEmail != null && !toEmail.isBlank()) {
+            new Thread(() ->
+                    emailService.sendLoginNotification(toEmail, uname, loginTime)
+            ).start();
         }
+
+        // Return to the page they were trying to reach before login (if any)
+        String redirectTarget = (String) session.getAttribute("redirectAfterLogin");
+        if (redirectTarget != null && !redirectTarget.isEmpty()) {
+            session.removeAttribute("redirectAfterLogin");
+            return "redirect:" + redirectTarget;
+        }
+
+        return "redirect:/";
     }
 
-
-    //LOGOUT
+    //  LOGOUT
 
     @GetMapping("/logout")
     public String logout(HttpSession session, RedirectAttributes redirectAttrs) {
@@ -65,12 +88,9 @@ public class UserController {
 
     // REGISTER
 
-    //Show the registration page
     @GetMapping("/register")
     public String showRegisterPage(Model model) {
         model.addAttribute("customer", new Customer());
-        // Pre-defined security questions for the dropdown
-        model.addAttribute("securityQuestions", getSecurityQuestions());
         return "user/register";
     }
 
@@ -79,37 +99,26 @@ public class UserController {
                                   RedirectAttributes redirectAttrs) {
 
         boolean success = userService.registerCustomer(customer);
-
         if (success) {
             redirectAttrs.addFlashAttribute("successMsg",
-                    "Account created successfully! Please log in.");
+                    "Account created! Please log in.");
             return "redirect:/user/login";
-        } else {
-            redirectAttrs.addFlashAttribute("errorMsg",
-                    "Username or email is already taken. Please try again.");
-            return "redirect:/user/register";
         }
+        redirectAttrs.addFlashAttribute("errorMsg",
+                "Username or email is already taken. Please try again.");
+        return "redirect:/user/register";
     }
 
-    // Reading the profile
+    // PROFILE
 
     @GetMapping("/profile")
-    public String showProfile(HttpSession session, Model model,
-                              RedirectAttributes redirectAttrs) {
-
+    public String showProfile(HttpSession session, Model model) {
         User loggedIn = (User) session.getAttribute("loggedInUser");
-        if (loggedIn == null) {
-            return "redirect:/user/login"; // not logged in
-        }
-
-        // Refresh from file to get latest data
-        User freshUser = userService.findById(loggedIn.getUserId());
-        model.addAttribute("user", freshUser);
+        if (loggedIn == null) return "redirect:/user/login";
+        model.addAttribute("user",      userService.findById(loggedIn.getUserId()));
         model.addAttribute("pageTitle", "My Profile");
         return "user/profile";
     }
-
-    //  UPDATE PROFILE
 
     @PostMapping("/profile/update")
     public String updateProfile(@RequestParam String userId,
@@ -126,10 +135,7 @@ public class UserController {
         user.setPhone(phone);
         user.setEmail(email);
 
-        boolean success = userService.updateProfile(user);
-
-        if (success) {
-            // Update session with new details
+        if (userService.updateProfile(user)) {
             session.setAttribute("loggedInUser", user);
             redirectAttrs.addFlashAttribute("successMsg", "Profile updated successfully!");
         } else {
@@ -146,89 +152,101 @@ public class UserController {
                                  RedirectAttributes redirectAttrs) {
 
         if (!newPassword.equals(confirmPassword)) {
-            redirectAttrs.addFlashAttribute("errorMsg",
-                    "New passwords do not match!");
+            redirectAttrs.addFlashAttribute("errorMsg", "New passwords do not match!");
             return "redirect:/user/profile";
         }
-
-        boolean success = userService.changePassword(userId, oldPassword, newPassword);
-
-        if (success) {
-            redirectAttrs.addFlashAttribute("successMsg",
-                    "Password changed successfully!");
+        if (userService.changePassword(userId, oldPassword, newPassword)) {
+            redirectAttrs.addFlashAttribute("successMsg", "Password changed successfully!");
         } else {
-            redirectAttrs.addFlashAttribute("errorMsg",
-                    "Current password is incorrect!");
+            redirectAttrs.addFlashAttribute("errorMsg", "Current password is incorrect!");
         }
         return "redirect:/user/profile";
     }
 
-
-    // DELETE / DEACTIVATE
+    // DEACTIVATE
 
     @GetMapping("/deactivate")
     public String deactivateAccount(HttpSession session,
                                     RedirectAttributes redirectAttrs) {
-
         User user = (User) session.getAttribute("loggedInUser");
         if (user == null) return "redirect:/user/login";
-
         userService.deactivateUser(user.getUserId());
         session.invalidate();
-
-        redirectAttrs.addFlashAttribute("successMsg",
-                "Your account has been deactivated.");
+        redirectAttrs.addFlashAttribute("successMsg", "Your account has been deactivated.");
         return "redirect:/user/login";
     }
 
-    //              FORGOT PASSWORD  (3-step flow)
+    //  FORGOT PASSWORD — OTP FLOW
+    //  Step 1  GET  /user/forgot-password     → show username form
+    //  Step 1  POST /user/forgot-password     → look up user, send OTP email
+    //  Step 2  POST /user/verify-otp          → validate OTP code
+    //  Step 3  POST /user/reset-password      → save new password
 
+    // Step 1 – show the username entry form
     @GetMapping("/forgot-password")
     public String showForgotPasswordPage() {
         return "user/forgot-password";
     }
 
-
+    /*
+      Step 1 POST – look up the user, generate an OTP, email it.
+      We intentionally show the same "check your email" message whether
+      or not the username exists, to prevent username enumeration.
+     */
     @PostMapping("/forgot-password")
-    public String fetchSecurityQuestion(@RequestParam String username,
-                                        Model model) {
+    public String sendOtp(@RequestParam String username, Model model) {
 
-        String question = userService.getSecurityQuestion(username);
+        User user = userService.findByUsername(username);
 
-        if (question == null) {
-            model.addAttribute("errorMsg", "Username not found.");
-            return "user/forgot-password";
+        if (user != null && user.getEmail() != null && !user.getEmail().isBlank()) {
+            // Generate OTP and fire email on a background thread
+            String otp = otpStore.generate(username);
+            String email = user.getEmail();
+            new Thread(() ->
+                    emailService.sendOtpEmail(email, username, otp)
+            ).start();
         }
-
-        // Pass the question and username to the JSP for step 2
-        model.addAttribute("username", username);
-        model.addAttribute("securityQuestion", question);
-        return "user/forgot-password"; // same JSP, different section visible
-    }
-
-
-    @PostMapping("/verify-answer")
-    public String verifyAnswer(@RequestParam String username,
-                               @RequestParam String securityAnswer,
-                               Model model) {
-
-        boolean correct = userService.verifySecurityAnswer(username, securityAnswer);
-
-        if (!correct) {
-            // Re-fetch question to show it again
-            String question = userService.getSecurityQuestion(username);
-            model.addAttribute("username", username);
-            model.addAttribute("securityQuestion", question);
-            model.addAttribute("errorMsg", "Incorrect answer. Please try again.");
-            return "user/forgot-password";
-        }
-
-        // Answer is correct – show new password form
-        model.addAttribute("username", username);
-        model.addAttribute("showResetForm", true);
+        // Always show the OTP entry step, regardless of whether the user exists
+        model.addAttribute("username",    username);
+        model.addAttribute("otpSent",     true);
+        model.addAttribute("infoMsg",
+                "If that username exists, a 6-digit code has been sent to the " +
+                        "registered email address. Check your inbox.");
         return "user/forgot-password";
     }
 
+    // Step 2 POST – verify the OTP the user typed in.
+
+    @PostMapping("/verify-otp")
+    public String verifyOtp(@RequestParam String username,
+                            @RequestParam String otpCode,
+                            Model model) {
+
+        OtpStore.VerifyResult result = otpStore.verify(username, otpCode);
+
+        if (result.isOk()) {
+            // OTP correct — show the new-password form
+            model.addAttribute("username",      username);
+            model.addAttribute("showResetForm", true);
+            return "user/forgot-password";
+        }
+
+        // OTP failed — show error and stay on step 2
+        String msg;
+        switch (result) {
+            case EXPIRED:   msg = "That code has expired. Please request a new one."; break;
+            case TOO_MANY:  msg = "Too many incorrect attempts. Please request a new code."; break;
+            case NOT_FOUND: msg = "No active code found. Please request a new one."; break;
+            default:        msg = "Incorrect code. Please try again.";
+        }
+
+        model.addAttribute("username",  username);
+        model.addAttribute("otpSent",   true);
+        model.addAttribute("errorMsg",  msg);
+        return "user/forgot-password";
+    }
+
+    // Step 3 POST – save the new password.
 
     @PostMapping("/reset-password")
     public String resetPassword(@RequestParam String username,
@@ -237,12 +255,14 @@ public class UserController {
                                 RedirectAttributes redirectAttrs) {
 
         if (!newPassword.equals(confirmPassword)) {
-            redirectAttrs.addFlashAttribute("errorMsg",
-                    "Passwords do not match!");
+            redirectAttrs.addFlashAttribute("errorMsg", "Passwords do not match!");
             return "redirect:/user/forgot-password";
         }
 
         boolean success = userService.resetPassword(username, newPassword);
+
+        // Clean up any lingering OTP entry (already consumed, but be safe)
+        otpStore.invalidate(username);
 
         if (success) {
             redirectAttrs.addFlashAttribute("successMsg",
@@ -254,18 +274,4 @@ public class UserController {
         return "redirect:/user/login";
     }
 
-
-    // HELPER
-
-
-    //Pre-defined list of security questions shown in the register form
-    private String[] getSecurityQuestions() {
-        return new String[]{
-            "What is the name of your first pet?",
-            "What is your mother's maiden name?",
-            "What was the name of your first school?",
-            "What is your favourite movie?",
-            "What city were you born in?"
-        };
-    }
 }
