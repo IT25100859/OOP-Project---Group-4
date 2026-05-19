@@ -1,6 +1,7 @@
-package com.components3.Movie.ticket.Reservation.Platform.service;
-import com.components3.Movie.ticket.Reservation.Platform.bean.ShowTime;
-import com.components3.Movie.ticket.Reservation.Platform.bean.TheaterHall;
+package com.CompleteProject.completeproject.service;
+
+import com.CompleteProject.completeproject.bean.ShowTime;
+import com.CompleteProject.completeproject.bean.TheaterHall;
 
 import java.util.List;
 
@@ -8,24 +9,29 @@ public interface ShowTimeService {
 
     boolean addShowTime(ShowTime showTime);
 
-    ShowTime getShowTimeByID(String showtimeID);
+    ShowTime getShowTimeByID(String showtimeId);
 
     List<ShowTime> getAllShowTimes();
 
     List<ShowTime> getShowTimesByDate(String date);
 
-    List<ShowTime> getShowTimesByHall(String hallID);
+    List<ShowTime> getShowTimesByHall(String hallId);
 
-    boolean UpdateShowTime(ShowTime showTime);
+    /*
+      Returns all showtimes for a given movie title
+      Used by the "Showtimes" button on the movie gallery
+     */
+    List<ShowTime> getShowTimesByMovieTitle(String movieTitle);
 
-    boolean deleteShowTime(String showTimeID);
+    boolean updateShowTime(ShowTime showTime);
 
-    boolean isHallAvailable(String hallID,String date,String showtime, String excludeID);
+    boolean deleteShowTime(String showTimeId);
+
+    boolean isHallAvailable(String hallId, String date, String showTime, String excludeId);
 
     List<ShowTime> getAvailableShowtimes(String date);
 
     List<TheaterHall> getAllHalls();
 
     TheaterHall getHallById(String hallId);
-
 }
