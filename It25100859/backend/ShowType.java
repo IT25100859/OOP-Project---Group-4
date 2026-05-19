@@ -1,5 +1,8 @@
-package com.components3.Movie.ticket.Reservation.Platform.bean;
+package com.CompleteProject.completeproject.bean;
 
+// OOP concept - encapsulation, maintained bystoring constant separately in a class file
+// contains the pricing logic
+//Abstraction
 public enum ShowType {
 
      STANDARD_2D{
@@ -12,7 +15,7 @@ public enum ShowType {
          }
 
      },
-    
+
     PREMIUM_3D{
 
          public double calculatePrice(double base_price){
