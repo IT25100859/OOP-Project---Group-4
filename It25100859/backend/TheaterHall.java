@@ -1,19 +1,32 @@
-package com.Components3.component3.bean;
+package com.CompleteProject.completeproject.bean;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class TheaterHall {
-
     private String hallId;
     private String hallName;
     private int rows;
     private int columns;
     private String HallType;
+
+    public TheaterHall() {}
+
+    public TheaterHall(String hallId, String hallName, int rows, int columns, String HallType) {
+        this.hallId = hallId;
+        this.hallName = hallName;
+        this.rows = rows;
+        this.columns = columns;
+        this.HallType = HallType;
+    }
+
+    public String getHallId() { return hallId; }
+    public void setHallId(String hallId) { this.hallId = hallId; }
+    public String getHallName() { return hallName; }
+    public void setHallName(String hallName) { this.hallName = hallName; }
+    public int getRows() { return rows; }
+    public void setRows(int rows) { this.rows = rows; }
+    public int getColumns() { return columns; }
+    public void setColumns(int columns) { this.columns = columns; }
+    public String getHallType() { return HallType; }
+    public void setHallType(String HallType) { this.HallType = HallType; }
 
     public int getTotalSeats(){
         return rows*columns;
