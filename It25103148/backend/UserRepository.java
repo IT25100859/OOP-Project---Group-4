@@ -1,8 +1,9 @@
-package com.users.userprofile.repository;
+package com.CompleteProject.completeproject.repository;
 
-import com.users.userprofile.bean.Admin;
-import com.users.userprofile.bean.Customer;
-import com.users.userprofile.bean.User;
+import com.CompleteProject.completeproject.bean.Admin;
+import com.CompleteProject.completeproject.bean.Customer;
+import com.CompleteProject.completeproject.bean.User;
+import com.CompleteProject.completeproject.util.FilePathConstants;
 import org.springframework.stereotype.Repository;
 
 import java.io.*;
@@ -13,7 +14,7 @@ import java.util.List;
 @Repository
 public class UserRepository {
 
-    private static final String USERS_FILE = "data/users.txt";
+    private static final String USERS_FILE = FilePathConstants.USERS_FILE;
 
 
     //                      READ OPERATIONS
