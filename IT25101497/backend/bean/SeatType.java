@@ -3,10 +3,7 @@ package com.CompleteProject.completeproject.bean;
 
 
 
- // OOP Concepts:
- //   - Polymorphism  : abstract calculatePrice() overridden by each constant
- //   - Encapsulation : pricing logic hidden inside each constant
-
+ 
  //   Rows A & B  → VIP     (first 2 rows of any hall)
  //   Row  C+     → STANDARD
  
