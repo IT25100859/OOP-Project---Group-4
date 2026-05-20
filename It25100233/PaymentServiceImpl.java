@@ -11,10 +11,10 @@ import java.time.LocalDate;
 import java.util.*;
 
 
-@Service
+
 public class PaymentServiceImpl implements PaymentService {
 
-    @Autowired
+    
     private PaymentRepository paymentRepository;
 
     
@@ -49,7 +49,7 @@ public class PaymentServiceImpl implements PaymentService {
 
   
 
-    @Override
+    
     public Payment processCounterPayment(String bookingId, String userId,
                                          double amount, String promoCode) {
 
@@ -69,24 +69,24 @@ public class PaymentServiceImpl implements PaymentService {
 
  
 
-    @Override
+    
     public Payment getPaymentById(String paymentId) {
         return paymentRepository.findById(paymentId);
     }
 
-    @Override
+    
     public Payment getPaymentByBookingId(String bookingId) {
         return paymentRepository.findByBookingId(bookingId);
     }
 
-    @Override
+    
     public List<Payment> getPaymentsByUser(String userId) {
         List<Payment> list = paymentRepository.findByUserId(userId);
         list.sort((a, b) -> b.getPaymentDate().compareTo(a.getPaymentDate()));
         return list;
     }
 
-    @Override
+    
     public List<Payment> getAllPayments() {
         List<Payment> list = paymentRepository.readAll();
         list.sort((a, b) -> b.getPaymentDate().compareTo(a.getPaymentDate()));
