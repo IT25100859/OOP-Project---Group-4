@@ -8,12 +8,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/*
-  PaymentRepository – all CRUD operations on payments.txt.
 
-  Uses Payment.fromFileString() factory to deserialise each line into
-  the correct concrete subclass (OnlinePayment or CounterPayment).
- */
 @Repository
 public class PaymentRepository {
 
