@@ -2,13 +2,7 @@ package com.CompleteProject.completeproject.bean;
 
 import java.util.UUID;
 
-/*
-  OnlinePayment – concrete subclass of Payment for card/online payments.
-  OOP Concepts
-    - Inheritance : extends Payment, inherits all base fields and helpers.
-    - Abstraction : implements processPayment() with card-specific logic.
-    - Encapsulation: stores only the last 4 digits of the card, Never the full number, protecting sensitive financial data.
- */
+
 public class OnlinePayment extends Payment {
     private String cardType;
     private String cardLastFour;
@@ -36,11 +30,7 @@ public class OnlinePayment extends Payment {
 
     // Abstract implementations
 
-    /*
-     Simulates a card charge.
-     In a production system this would call a payment gateway (Stripe, PayHere etc.)
-     Here we validate that card details are present and mark COMPLETED.
-     */
+ 
     @Override
     public boolean processPayment() {
         if (cardLastFour == null || cardLastFour.length() != 4) {
