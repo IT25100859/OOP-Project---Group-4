@@ -15,17 +15,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
-/*
-  PaymentController – manages the checkout and billing flow
 
-  URL map
-    GET  /payment/checkout?bookingId=X   -> checkout.jsp  (payment form)
-    POST /payment/process                -> process payment, redirect to receipt
-    GET  /payment/success/{paymentId}    -> payment-success.jsp  (receipt)
-    GET  /payment/my-payments            -> my-payments.jsp
-    GET  /payment/refund/{paymentId}     -> refund + redirect
-    GET  /payment/all           (admin)  -> all-payments.jsp
- */
 @Controller
 @RequestMapping("/payment")
 public class PaymentController {
