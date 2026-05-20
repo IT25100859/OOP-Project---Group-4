@@ -10,25 +10,14 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.*;
 
-/*
-  PaymentServiceImpl – core payment processing engine.
 
-  OOP Concepts:
-    - Polymorphism : processPayment() is called on whichever Payment subclass
-                     is created. The same method name executes different logic
-                     (card charge vs counter confirmation) without any if/switch.
-    - Abstraction  : this class works entirely through the Payment interface;
-                     it never casts to OnlinePayment or CounterPayment after
-                     construction — only calls processPayment() polymorphically.
- */
 @Service
 public class PaymentServiceImpl implements PaymentService {
 
     @Autowired
     private PaymentRepository paymentRepository;
 
-    // Promo code definitions
-    // Maps code → discount fraction (0.10 = 10%)
+    
     private static final Map<String, Double> PROMO_CODES;
     static {
         PROMO_CODES = new LinkedHashMap<>();
@@ -37,9 +26,9 @@ public class PaymentServiceImpl implements PaymentService {
         PROMO_CODES.put("WEEKEND20",  0.20);
     }
 
-    // CREATE: Online payment
 
-    @Override
+
+    
     public Payment processOnlinePayment(String bookingId, String userId,
                                         double amount, String promoCode,
                                         String cardType, String cardLastFour) {
@@ -47,18 +36,18 @@ public class PaymentServiceImpl implements PaymentService {
         double discount    = calculateDiscount(amount, promoCode);
         double finalAmount = round2(amount - discount);
 
-        // Build the concrete subclass
+ 
         OnlinePayment payment = new OnlinePayment(cardType, cardLastFour);
         fillCommonFields(payment, bookingId, userId, amount, promoCode, discount, finalAmount);
 
-        // Polymorphic call — OnlinePayment.processPayment() runs
+    
         if (!payment.processPayment()) return null;
 
         paymentRepository.save(payment);
         return payment;
     }
 
-    // CREATE: Counter payment
+  
 
     @Override
     public Payment processCounterPayment(String bookingId, String userId,
@@ -71,14 +60,14 @@ public class PaymentServiceImpl implements PaymentService {
         CounterPayment payment = new CounterPayment("CTR-1", receiptNo);
         fillCommonFields(payment, bookingId, userId, amount, promoCode, discount, finalAmount);
 
-        // Polymorphic call — CounterPayment.processPayment() runs
+       
         if (!payment.processPayment()) return null;
 
         paymentRepository.save(payment);
         return payment;
     }
 
-    // READ
+ 
 
     @Override
     public Payment getPaymentById(String paymentId) {
@@ -104,9 +93,9 @@ public class PaymentServiceImpl implements PaymentService {
         return list;
     }
 
-    // UPDATE: Refund
+    
 
-    @Override
+  
     public boolean refundPayment(String paymentId, String requestingUserId) {
         Payment payment = paymentRepository.findById(paymentId);
         if (payment == null || payment.isRefunded()) return false;
@@ -116,22 +105,20 @@ public class PaymentServiceImpl implements PaymentService {
         return paymentRepository.update(payment);
     }
 
-    // DELETE
+    
 
     @Override
     public boolean deletePayment(String paymentId) {
         return paymentRepository.delete(paymentId);
     }
 
-    // PROMO CODES
-
-    @Override
+   
     public double validatePromoCode(String code) {
         if (code == null || code.isBlank()) return 0.0;
         return PROMO_CODES.getOrDefault(code.trim().toUpperCase(), 0.0);
     }
 
-    @Override
+  
     public Map<String, String> getPromoCodeHints() {
         Map<String, String> hints = new LinkedHashMap<>();
         PROMO_CODES.forEach((code, frac) ->
@@ -139,7 +126,7 @@ public class PaymentServiceImpl implements PaymentService {
         return hints;
     }
 
-    // PRIVATE HELPERS
+    
 
     private void fillCommonFields(Payment payment, String bookingId, String userId,
                                   double amount, String promoCode,
