@@ -1,13 +1,6 @@
 package com.CompleteProject.completeproject.bean;
 
-/*
- CounterPayment – concrete subclass of Payment for in-person counter payments.
 
-  OOP Concepts:
-    - Inheritance : extends Payment, inherits all base fields.
-    - Abstraction : implements processPayment() with counter-specific logic.
-                    Counter payments are marked PENDING until staff confirms cash.
- */
 public class CounterPayment extends Payment {
     private String counterRef;
     private String receiptNumber;
@@ -26,12 +19,7 @@ public class CounterPayment extends Payment {
 
     // Abstract implementations
 
-    /*
-      Counter payments are always marked PENDING
-      They require physical cash collection by staff
-      The cashier updates the record to Completed once cash is received
-      For this project, we simulate immediate confirmation
-     */
+   
     @Override
     public boolean processPayment() {
         setStatus("COMPLETED");   // simulated — in reality staff confirms
