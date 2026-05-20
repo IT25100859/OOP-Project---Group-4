@@ -1,26 +1,6 @@
 package com.CompleteProject.completeproject.bean;
 
-/*
-  Payment – abstract base class for all payment types.
 
-  OOP Concepts
-    - Abstraction    : processPayment() and getPaymentType() are abstract;
-                       callers work through this interface without knowing
-                       whether the underlying type is Online or Counter.
-    - Encapsulation  : all financial fields are private; only exposed via
-                       Lombok-generated getters/setters to protect data integrity.
-    - Inheritance    : OnlinePayment and CounterPayment extend this class
-                       and inherit all common fields and behaviour.
-
-  File format (pipe-separated, 13 columns) in payments.txt
-  paymentId | bookingId | userId | amount | promoCode | discount | finalAmount | paymentDate | status | paymentType |
-  typeField1 | typeField2 | typeField3
-
-   ONLINE  type fields : cardType | lastFour | transactionId
-   COUNTER type fields : counterRef | receiptNumber | N/A
-
-  status values: COMPLETED | PENDING | REFUNDED | FAILED
- */
 public abstract class Payment {
     private String paymentId;
     private String bookingId;
@@ -55,13 +35,7 @@ public abstract class Payment {
 
     // Abstract methods
 
-    /*
-      Processes the payment.
-      Online implementation simulates a card charge.
-      Counter implementation marks payment as pending collection.
-
-      @return true if payment was processed successfully
-     */
+ 
     public abstract boolean processPayment();
 
     public abstract String getPaymentType();
@@ -92,10 +66,7 @@ public abstract class Payment {
         ) + "|" + getTypeSpecificFields();
     }
 
-    /*
-      Factory method — reads the paymentType field (index 9) and delegates
-      to the correct subclass parser. Keeps deserialization logic centralised.
-     */
+   
     public static Payment fromFileString(String line) {
         String[] p = line.split("\\|", -1);
         if (p.length < 10) return null;
