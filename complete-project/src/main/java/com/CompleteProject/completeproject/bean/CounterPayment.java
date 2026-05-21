@@ -47,7 +47,7 @@ public class CounterPayment extends Payment {
                (receiptNumber != null ? receiptNumber : "N/A")   + "|N/A";
     }
 
-    // ── Deserialisation ────────────────────────────────────────────────────
+    // ── Deserialisation
 
     public static CounterPayment fromFileParts(String[] p) {
         CounterPayment cp = new CounterPayment();

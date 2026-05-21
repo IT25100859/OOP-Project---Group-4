@@ -1,4 +1,11 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
+<%-- Prevent browser caching so navbar always reflects real session state --%>
+<%
+    response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+    response.setHeader("Pragma",        "no-cache");
+    response.setDateHeader("Expires",   0);
+%>
+
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="en">
@@ -142,15 +149,7 @@
         .info-key { color: var(--dim); font-size: 0.68rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
         .info-val { color: var(--text); font-size: 0.9rem; font-weight: 500; }
 
-        /* Polymorphism display box */
-        .poly-box {
-            background: var(--card); border: 1px solid var(--border);
-            border-left: 3px solid var(--gold);
-            border-radius: var(--radius); padding: 1rem 1.25rem;
-            font-family: 'Courier New', monospace; font-size: 0.82rem;
-            color: var(--muted); margin-bottom: 1.5rem;
-        }
-        .poly-label { color: var(--dim); font-size: 0.68rem; margin-bottom: 5px; }
+
 
         /* Action buttons */
         .action-row { display: flex; gap: 10px; flex-wrap: wrap; }
@@ -296,13 +295,11 @@
             </c:choose>
         </div>
 
-        <!-- Polymorphism display box -->
-        <div class="poly-box">
-            <div class="poly-label">movie.displayInfo() → Polymorphism at work</div>
-            ${movie.displayInfo()}
-        </div>
+
 
         <!-- Action buttons -->
+
+
         <div class="action-row">
             <a href="${pageContext.request.contextPath}/" class="btn-action btn-back">
                 <i class="bi bi-arrow-left"></i> Back

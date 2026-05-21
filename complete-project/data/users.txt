@@ -9,6 +9,6 @@ U007|test|test@gamail.com|test|test|0705805208|CUSTOMER|What is the name of your
 U008|trial|pichupikachu859@gmail.com|trial|Saman Ranthnayaka|0777618935|CUSTOMER|What is the name of your first pet?|sgpt|ACTIVE|0
 U009|security|it25100859@my.sliit.lk|security|security|123456789|CUSTOMER|N/A|N/A|ACTIVE|0
 U010|kalsara|it25101497@gmail.com|kalsara|kalsara|123456789|CUSTOMER|N/A|N/A|ACTIVE|0
-U011|saman|movietrial1041@gmail.com|password|saman|123456789|CUSTOMER|N/A|N/A|ACTIVE|0
-U012|Kala|malishakalsara4@gmail.com|Kala@497|KALSARA MALEESHA HERATH|+94771315951|CUSTOMER|N/A|N/A|ACTIVE|0
-U013|Sas|cineflix.1kbusiness@gmail.com|Sas@1234|Sasmitha Kaveesha|+94771315951|CUSTOMER|N/A|N/A|ACTIVE|0
+U011|Kala|malishakalsara4@gmail.com|Kala@497|KALSARA MALEESHA HERATH|+94771315951|CUSTOMER|N/A|N/A|ACTIVE|0
+U012|Sas|cineflix.1kbusiness@gmail.com|Sas@1234|Sasmitha Kaveesha|+94771315951|CUSTOMER|N/A|N/A|ACTIVE|0
+

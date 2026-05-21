@@ -101,7 +101,7 @@ public class ShowTimeServiceImpl implements ShowTimeService {
                 .collect(Collectors.toList());
     }
 
-    // ── HALLS ──────────────────────────────────────────────────────────────
+    //  HALLS
 
     @Override
     public List<TheaterHall> getAllHalls() {

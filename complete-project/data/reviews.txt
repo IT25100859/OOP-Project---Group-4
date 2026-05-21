@@ -4,3 +4,5 @@ RV003|Inception|U001|cat|5|Mind-bending masterpiece. Nolan at his absolute best.
 RV004|Inception|U004|cat|5|amazing|2026-05-04|APPROVED
 RV005|The Mask|U006|pavithra|4|great movie|2026-05-07|REMOVED
 RV006|Avengers: Endgame|U013|Sas|4|I Love Marvels Universe|2026-05-18|APPROVED
+RV007|Mad Max: Fury Road|U011|saman|4|Great movie|2026-05-21|APPROVED
+RV008|Mad Max: Fury Road|U004|cat|3|best movie|2026-05-21|APPROVED
